@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwarmIQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0e0c;
+  --ink2: #3d3a35;
+  --ink3: #7a756c;
+  --ink4: #b5b0a8;
+  --paper: #faf8f5;
+  --paper2: #f2efe9;
+  --paper3: #e8e4dc;
+  --accent: #1a6b4a;
+  --accent2: #2d9b6b;
+  --amber: #c4701a;
+  --red: #b53a2a;
+  --line: #e0dbd2;
+  --r: 10px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(250,248,245,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  padding: 0 40px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+.nav-logo em { color: var(--accent); font-style: italic; }
+.nav-tag {
+  font-size: 11px; font-weight: 500; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--ink3);
+  border: 1px solid var(--line);
+  padding: 4px 12px; border-radius: 20px;
+}
+
+/* HERO */
+.hero {
+  max-width: 900px; margin: 0 auto;
+  padding: 72px 24px 48px;
+  text-align: center;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 20px;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 1.1;
+  color: var(--ink);
+  margin-bottom: 18px;
+  letter-spacing: -1px;
+}
+.hero h1 em { color: var(--accent); font-style: italic; }
+
+.hero-sub {
+  font-size: 16px; color: var(--ink3); line-height: 1.7;
+  max-width: 480px; margin: 0 auto 40px; font-weight: 300;
+}
+
+/* SEARCH */
+.search-wrap {
+  max-width: 660px; margin: 0 auto;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 6px 6px 6px 20px;
+  display: flex; gap: 8px; align-items: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 4px 24px rgba(26,107,74,0.12);
+}
+.search-wrap input {
+  flex: 1; border: none; outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; color: var(--ink);
+  background: transparent;
+}
+.search-wrap input::placeholder { color: var(--ink4); }
+.search-btn {
+  padding: 11px 22px;
+  background: var(--ink);
+  color: #fff;
+  border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+.search-btn:hover { background: var(--accent); }
+.search-btn:active { transform: scale(0.97); }
+.search-btn:disabled { opacity: 0.4; cursor: not-allowed; background: var(--ink); }
+
+/* AGENT FLOW */
+.flow-wrap {
+  max-width: 900px; margin: 0 auto;
+  padding: 0 24px 48px;
+}
+.flow-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--ink4);
+  margin-bottom: 16px; text-align: center;
+}
+.flow {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.agent {
+  padding: 20px 18px;
+  border-right: 1px solid var(--line);
+  position: relative;
+  transition: background 0.3s;
+}
+.agent:last-child { border-right: none; }
+
+.agent-arrow {
+  position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 20px;
+  background: var(--paper2);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--ink3); z-index: 2;
+}
+.agent:last-child .agent-arrow { display: none; }
+
+.agent-num {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  color: var(--ink4); text-transform: uppercase; margin-bottom: 10px;
+}
+.agent-title {
+  font-size: 14px; font-weight: 600; color: var(--ink);
+  margin-bottom: 5px;
+}
+.agent-desc { font-size: 12px; color: var(--ink3); line-height: 1.5; }
+.agent-stat {
+  margin-top: 10px; font-size: 12px; font-weight: 600;
+  color: var(--ink4); min-height: 18px;
+  transition: color 0.3s;
+}
+
+/* Agent states */
+.agent.state-active {
+  background: #f0f9f4;
+}
+.agent.state-active .agent-num { color: var(--accent); }
+.agent.state-active .agent-title { color: var(--accent); }
+
+.agent.state-done { background: #f0f9f4; }
+.agent.state-done .agent-stat { color: var(--accent); }
+.agent.state-done .agent-num { color: var(--accent2); }
+
+.agent.state-error { background: #fef5f4; }
+.agent.state-error .agent-stat { color: var(--red); }
+
+/* Progress bar */
+.progress-track {
+  height: 2px; background: var(--line);
+  border-radius: 1px; overflow: hidden;
+  margin-bottom: 24px;
+}
+.progress-fill {
+  height: 100%; width: 0%;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Status */
+.status-line {
+  text-align: center; font-size: 13px;
+  color: var(--ink3); margin-bottom: 40px;
+  min-height: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.status-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+.status-spinner.visible { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* RESULTS */
+.results { display: none; max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+.results.visible { display: block; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+/* Report card */
+.report-card {
+  background: #fff; border: 1px solid var(--line);
+  border-radius: var(--r); margin-bottom: 16px; overflow: hidden;
+}
+.report-top {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.report-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--ink4); margin-bottom: 12px;
+}
+.report-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px; line-height: 1.25;
+  color: var(--ink); margin-bottom: 16px; letter-spacing: -0.3px;
+}
+.badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge-pill {
+  font-size: 11px; font-weight: 600; padding: 4px 12px;
+  border-radius: 20px; letter-spacing: 0.3px;
+}
+.b-high { background: #e6f4ed; color: var(--accent); }
+.b-medium { background: #fef3e2; color: var(--amber); }
+.b-low { background: #fdecea; color: var(--red); }
+.b-neutral { background: var(--paper2); color: var(--ink3); }
+
+.exec-box {
+  padding: 24px 32px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.exec-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--ink4); margin-bottom: 10px;
+}
+.exec-text {
+  font-size: 15px; line-height: 1.75; color: var(--ink2);
+  font-weight: 300;
+}
+
+/* Sections */
+.sections-grid { padding: 24px 32px; display: grid; gap: 28px; }
+.sec-heading {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.sec-text {
+  font-size: 14px; line-height: 1.8; color: var(--ink2);
+  font-weight: 300;
+  display: -webkit-box; -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.sec-text.expanded { -webkit-line-clamp: unset; overflow: visible; }
+.read-more {
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  cursor: pointer; margin-top: 6px; display: inline-block;
+}
+
+/* VALIDATION GRID */
+.card-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+  gap: 10px; padding: 20px 24px;
+}
+.fact-card {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: 8px; padding: 14px;
+}
+.fact-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.verdict {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
+}
+.v-confirmed { background: #e6f4ed; color: var(--accent); }
+.v-uncertain { background: #fef3e2; color: var(--amber); }
+.v-contradicted { background: #fdecea; color: var(--red); }
+.conf-score { font-size: 11px; font-weight: 600; color: var(--ink3); }
+.fact-text { font-size: 13px; color: var(--ink); line-height: 1.5; margin-bottom: 6px; font-weight: 500; }
+.fact-reason { font-size: 12px; color: var(--ink3); line-height: 1.4; }
+.conf-bar { height: 2px; background: var(--line); border-radius: 1px; margin-top: 10px; }
+.conf-fill { height: 100%; border-radius: 1px; background: var(--accent); }
+
+/* INSIGHTS */
+.insights-list { padding: 20px 24px; display: grid; gap: 1px; }
+.insight-row {
+  display: flex; gap: 14px; padding: 14px 0;
+  border-bottom: 1px solid var(--line); align-items: flex-start;
+}
+.insight-row:last-child { border-bottom: none; }
+.insight-n {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px; color: var(--line); line-height: 1;
+  flex-shrink: 0; width: 28px;
+}
+.insight-text { font-size: 14px; color: var(--ink2); line-height: 1.6; font-weight: 300; }
+
+/* KEYWORDS */
+.kw-wrap { padding: 20px 24px; display: flex; flex-wrap: wrap; gap: 8px; }
+.kw {
+  font-size: 12px; font-weight: 500; color: var(--ink2);
+  background: var(--paper2);
+  border: 1px solid var(--line);
+  padding: 6px 14px; border-radius: 20px;
+}
+
+/* GAPS */
+.gaps-list { padding: 16px 24px; }
+.gap-row {
+  display: flex; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--line); align-items: flex-start;
+}
+.gap-row:last-child { border-bottom: none; }
+.gap-bar {
+  width: 3px; min-height: 20px; background: var(--amber);
+  border-radius: 2px; flex-shrink: 0; margin-top: 2px;
+}
+.gap-text { font-size: 13px; color: var(--ink2); line-height: 1.5; font-weight: 300; }
+
+/* CONFIDENCE DIAL */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  padding: 20px 24px; gap: 16px;
+}
+.stat-box {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: 8px; padding: 16px; text-align: center;
+}
+.stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px; color: var(--ink); line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 11px; color: var(--ink3); font-weight: 500; letter-spacing: 0.5px; }
+
+/* Section card header */
+.card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-header-title {
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  letter-spacing: -0.2px;
+}
+.card-header-count {
+  font-size: 11px; color: var(--ink4); font-weight: 500;
+  background: var(--paper2); padding: 3px 10px; border-radius: 20px;
+}
+
+/* TIMING */
+.timing-bar {
+  text-align: center; font-size: 12px; color: var(--ink4);
+  padding: 24px; margin-top: 8px; letter-spacing: 0.3px;
+}
+
+/* Suggestions */
+.suggestions {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center; margin-top: 16px;
+}
+.sug {
+  font-size: 12px; color: var(--ink3);
+  background: #fff; border: 1px solid var(--line);
+  padding: 6px 14px; border-radius: 20px; cursor: pointer;
+  transition: all 0.15s;
+}
+.sug:hover { border-color: var(--accent); color: var(--accent); background: #f0f9f4; }
+
+@media (max-width: 640px) {
+  .flow { grid-template-columns: 1fr 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  nav { padding: 0 16px; }
+  .hero { padding: 48px 16px 32px; }
+  .report-top, .exec-box, .sections-grid { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Swarm<em>IQ</em></div>
+  <div class="nav-tag">Theme 05 — Agent Swarms</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">
+    <span class="eyebrow-dot"></span>
+    Multi-agent research system
+  </div>
+  <h1>Research that thinks<br>like a <em>team</em></h1>
+  <p class="hero-sub">Four specialized AI agents plan, search, validate, and write — collaborating in real time to answer any research question.</p>
+
+  <div class="search-wrap">
+    <input type="text" id="queryInput"
+      placeholder="e.g. What are EV trends in India 2025?"
+      onkeydown="if(event.key==='Enter') runResearch()" />
+    <button class="search-btn" id="runBtn" onclick="runResearch()">Research</button>
+  </div>
+
+  <div class="suggestions">
+    <span class="sug" onclick="setQ('EV market trends India 2025')">EV market trends India 2025</span>
+    <span class="sug" onclick="setQ('AI chip industry landscape 2025')">AI chip industry 2025</span>
+    <span class="sug" onclick="setQ('Renewable energy growth globally')">Renewable energy growth</span>
+    <span class="sug" onclick="setQ('Startup ecosystem India 2025')">India startup ecosystem</span>
+  </div>
+</div>
+
+<div class="flow-wrap">
+  <div class="flow-label">Agent pipeline</div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="flow">
+    <div class="agent" id="ag-planner">
+      <div class="agent-arrow">›</div>
+      <div class="agent-num">01</div>
+      <div class="agent-title">Planner</div>
+      <div class="agent-desc">Breaks query into sub-tasks and search keywords</div>
+      <div class="agent-stat" id="st-planner">Waiting</div>
+    </div>
+    <div class="agent" id="ag-retriever">
+      <div class="agent-arrow">›</div>
+      <div class="agent-num">02</div>
+      <div class="agent-title">Retriever</div>
+      <div class="agent-desc">Searches the web for each keyword</div>
+      <div class="agent-stat" id="st-retriever">Waiting</div>
+    </div>
+    <div class="agent" id="ag-validator">
+      <div class="agent-arrow">›</div>
+      <div class="agent-num">03</div>
+      <div class="agent-title">Validator</div>
+      <div class="agent-desc">Cross-checks facts and scores confidence</div>
+      <div class="agent-stat" id="st-validator">Waiting</div>
+    </div>
+    <div class="agent" id="ag-writer">
+      <div class="agent-num">04</div>
+      <div class="agent-title">Writer</div>
+      <div class="agent-desc">Produces the final structured report</div>
+      <div class="agent-stat" id="st-writer">Waiting</div>
+    </div>
+  </div>
+
+  <div class="status-line" id="statusLine">
+    <div class="status-spinner" id="spinner"></div>
+    <span id="statusText">Enter a question to start all four agents</span>
+  </div>
+</div>
+
+<div class="results" id="results">
+
+  <!-- Report -->
+  <div class="report-card">
+    <div class="report-top">
+      <div class="report-label">Research Report</div>
+      <div class="report-title" id="rTitle"></div>
+      <div class="badges" id="rBadges"></div>
+    </div>
+    <div class="exec-box">
+      <div class="exec-label">Executive Summary</div>
+      <div class="exec-text" id="rExec"></div>
+    </div>
+    <div class="sections-grid" id="rSections"></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="report-card">
+    <div class="card-header">
+      <div class="card-header-title">Validation Summary</div>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+  </div>
+
+  <!-- Fact cards -->
+  <div class="report-card">
+    <div class="card-header">
+      <div class="card-header-title">Fact Checks</div>
+      <div class="card-header-count" id="factCount"></div>
+    </div>
+    <div class="card-grid" id="factsGrid"></div>
+  </div>
+
+  <!-- Insights -->
+  <div class="report-card">
+    <div class="card-header">
+      <div class="card-header-title">Key Insights</div>
+    </div>
+    <div class="insights-list" id="insightsList"></div>
+  </div>
+
+  <!-- Keywords + Gaps side by side -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="report-card" style="margin-bottom:0">
+      <div class="card-header">
+        <div class="card-header-title">Search Keywords</div>
+      </div>
+      <div class="kw-wrap" id="kwList"></div>
+    </div>
+    <div class="report-card" style="margin-bottom:0">
+      <div class="card-header">
+        <div class="card-header-title">Research Gaps</div>
+      </div>
+      <div class="gaps-list" id="gapsList"></div>
+    </div>
+  </div>
+
+  <div class="timing-bar" id="timingBar"></div>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+
+function setQ(q) {
+  document.getElementById('queryInput').value = q;
+  document.getElementById('queryInput').focus();
+}
+
+function setAgent(name, state, stat) {
+  const el = document.getElementById('ag-' + name);
+  const st = document.getElementById('st-' + name);
+  el.className = 'agent state-' + state;
+  if (stat !== undefined) st.textContent = stat;
+}
+
+function setStatus(text, spinning) {
+  document.getElementById('statusText').textContent = text;
+  document.getElementById('spinner').className = 'status-spinner' + (spinning ? ' visible' : '');
+}
+
+function setProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+async function runResearch() {
+  const query = document.getElementById('queryInput').value.trim();
+  if (!query) return;
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true; btn.textContent = 'Running...';
+  document.getElementById('results').classList.remove('visible');
+  ['planner','retriever','validator','writer'].forEach(a => setAgent(a,'','Waiting'));
+  setProgress(0);
+
+  setTimeout(() => { setAgent('planner','active','Planning...'); setStatus('Planner agent analyzing your query...', true); setProgress(5); }, 200);
+
+  try {
+    const res = await fetch(API + '/research', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({query})
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail?.error || 'Pipeline failed');
+
+    const log = data.pipeline_log || [];
+    for (let i = 0; i < log.length; i++) {
+      const s = log[i];
+      await new Promise(r => setTimeout(r, 350));
+      if (s.step === 'planner') {
+        setAgent('planner','done', s.keywords + ' keywords · ' + s.complexity);
+        setProgress(25); setAgent('retriever','active','Searching web...');
+        setStatus('Retriever agent searching ' + s.keywords + ' keywords...', true);
+      } else if (s.step === 'retriever') {
+        setAgent('retriever','done', s.keywords_searched + ' searches · ' + s.total_facts_found + ' facts');
+        setProgress(55); setAgent('validator','active','Checking facts...');
+        setStatus('Validator agent cross-checking ' + s.total_facts_found + ' facts...', true);
+      } else if (s.step === 'validator') {
+        setAgent('validator','done', s.confirmed + '/' + s.facts_checked + ' confirmed · ' + s.confidence_score + '%');
+        setProgress(80); setAgent('writer','active','Writing report...');
+        setStatus('Writer agent generating final report...', true);
+      } else if (s.step === 'writer') {
+        setAgent('writer','done', s.sections + ' sections written');
+        setProgress(100);
+      }
+    }
+    await new Promise(r => setTimeout(r, 300));
+    setStatus('Complete in ' + data.elapsed_seconds + 's — report ready below', false);
+    render(data);
+  } catch(err) {
+    setStatus('Error: ' + err.message, false);
+    ['planner','retriever','validator','writer'].forEach(a => {
+      if (document.getElementById('ag-'+a).classList.contains('state-active')) setAgent(a,'error','Failed');
+    });
+  } finally {
+    btn.disabled = false; btn.textContent = 'Research';
+  }
+}
+
+function render(data) {
+  const rp = data.report, val = data.validation;
+  document.getElementById('rTitle').textContent = rp.title;
+
+  const rc = {high:'b-high',medium:'b-medium',low:'b-low'}[rp.reliability]||'b-neutral';
+  document.getElementById('rBadges').innerHTML =
+    `<span class="badge-pill ${rc}">${rp.reliability.toUpperCase()} RELIABILITY</span>` +
+    `<span class="badge-pill b-neutral">${rp.confidence_score}/100 confidence</span>` +
+    `<span class="badge-pill b-neutral">${rp.generated_at}</span>`;
+
+  document.getElementById('rExec').textContent = rp.executive_summary;
+
+  document.getElementById('rSections').innerHTML = rp.sections.map((s,i) => `
+    <div>
+      <div class="sec-heading">${s.heading}</div>
+      <div class="sec-text" id="sec${i}">${s.content}</div>
+      <span class="read-more" onclick="toggleSec(${i},this)">Read more</span>
+    </div>`).join('');
+
+  const confirmed = val.fact_checks.filter(f=>f.verdict==='confirmed').length;
+  const uncertain = val.fact_checks.filter(f=>f.verdict==='uncertain').length;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-box"><div class="stat-num">${val.confidence_score}<span style="font-size:16px;color:var(--ink3)">/100</span></div><div class="stat-label">Confidence score</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--accent)">${confirmed}</div><div class="stat-label">Facts confirmed</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--amber)">${uncertain}</div><div class="stat-label">Facts uncertain</div></div>`;
+
+  document.getElementById('factCount').textContent = val.fact_checks.length + ' facts';
+  document.getElementById('factsGrid').innerHTML = val.fact_checks.map(fc => {
+    const vc = {confirmed:'v-confirmed',uncertain:'v-uncertain',contradicted:'v-contradicted'}[fc.verdict]||'v-uncertain';
+    return `<div class="fact-card">
+      <div class="fact-top">
+        <span class="verdict ${vc}">${fc.verdict}</span>
+        <span class="conf-score">${fc.confidence}%</span>
+      </div>
+      <div class="fact-text">${fc.fact}</div>
+      <div class="fact-reason">${fc.reason}</div>
+      <div class="conf-bar"><div class="conf-fill" style="width:${fc.confidence}%"></div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('insightsList').innerHTML = val.key_insights.map((ins,i) =>
+    `<div class="insight-row"><div class="insight-n">0${i+1}</div><div class="insight-text">${ins}</div></div>`
+  ).join('');
+
+  document.getElementById('kwList').innerHTML = data.plan.search_keywords.map(kw =>
+    `<span class="kw">${kw}</span>`).join('');
+
+  document.getElementById('gapsList').innerHTML = (rp.gaps||[]).map(g =>
+    `<div class="gap-row"><div class="gap-bar"></div><div class="gap-text">${g}</div></div>`
+  ).join('');
+
+  document.getElementById('timingBar').textContent =
+    `SwarmIQ — ${data.elapsed_seconds}s total · ${data.plan.search_keywords.length} web searches · ${val.fact_checks.length} facts validated · 4 agents`;
+
+  const el = document.getElementById('results');
+  el.classList.add('visible');
+  el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function toggleSec(i, btn) {
+  const el = document.getElementById('sec'+i);
+  el.classList.toggle('expanded');
+  btn.textContent = el.classList.contains('expanded') ? 'Show less' : 'Read more';
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from datetime import datetime
 import traceback
@@ -35,6 +37,11 @@ class PipelineStatus(BaseModel):
 
 
 @app.get("/")
+
+@app.get("/dashboard")
+def dashboard():
+    return FileResponse("dashboard.html")
+
 def root():
     return {
         "name": "SwarmIQ",
@@ -48,6 +55,7 @@ def root():
         "status": "ready",
         "version": "1.0.0"
     }
+
 
 
 @app.post("/research")

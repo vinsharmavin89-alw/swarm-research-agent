@@ -3,1103 +3,1206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SwarmIQ — Agent Mission Control</title>
+<title>SwarmIQ — Intelligence Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════════════ */
 :root {
-  --bg: #050508;
-  --bg2: #0a0a10;
-  --bg3: #0f0f18;
-  --bg4: #14141f;
-  --border: rgba(255,255,255,0.06);
-  --border2: rgba(255,255,255,0.12);
-  --text: #e8e6f0;
-  --muted: #6b6880;
-  --dim: #3a3750;
-  --purple: #7c6ff7;
-  --purple2: #a89cff;
-  --cyan: #4ecdc4;
-  --green: #52e89a;
-  --amber: #f5b841;
-  --red: #ff6b6b;
-  --mono: 'JetBrains Mono', monospace;
-  --display: 'Syne', sans-serif;
+  --ink:       #0e0c1a;
+  --ink2:      #1c1830;
+  --ink3:      #2a2640;
+  --surface:   #f7f5ff;
+  --surface2:  #edeaff;
+  --surface3:  #e2deff;
+  --line:      rgba(14,12,26,0.1);
+  --line2:     rgba(14,12,26,0.06);
+  --text:      #0e0c1a;
+  --muted:     #5c5880;
+  --dim:       #9b98b8;
+  --accent:    #5b00ff;
+  --accent2:   #8b5cf6;
+  --cyan:      #00c6c6;
+  --gold:      #f0a500;
+  --red:       #e03030;
+  --green:     #00a86b;
+  --white:     #ffffff;
+
+  --font-display: 'Bebas Neue', impact, sans-serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  --r:  6px;
+  --r2: 12px;
+  --r3: 20px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+/* ═══════════════════════════════════════════════════════
+   RESET + BASE
+═══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 14px; scroll-behavior: smooth; }
 
 body {
-  background: var(--bg);
+  font-family: var(--font-body);
+  background: var(--surface);
   color: var(--text);
-  font-family: var(--mono);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* GRID NOISE BACKGROUND */
+/* Noise overlay */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(124,111,247,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124,111,247,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-size: 200px;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1000;
+  opacity: 0.4;
 }
 
-/* HEADER */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(5,5,8,0.92);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
+/* ═══════════════════════════════════════════════════════
+   HEADER — editorial masthead style
+═══════════════════════════════════════════════════════ */
+.masthead {
+  background: var(--ink);
+  padding: 0 32px;
   height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.logo {
-  font-family: var(--display);
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+.masthead-left {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: baseline;
+  gap: 10px;
 }
 
-.logo-icon {
-  width: 28px; height: 28px;
-  background: linear-gradient(135deg, var(--purple), var(--cyan));
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: 2px;
+  color: var(--white);
+  line-height: 1;
 }
 
-.logo span { color: var(--muted); font-weight: 400; }
+.wordmark em {
+  color: var(--accent2);
+  font-style: normal;
+}
 
-.header-right {
+.version-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 1px;
+  border: 1px solid var(--ink3);
+  padding: 2px 6px;
+  border-radius: var(--r);
+}
+
+.masthead-right {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.status-indicator {
+.system-status {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--muted);
-  font-family: var(--mono);
+  color: var(--dim);
 }
 
-.status-dot {
-  width: 6px; height: 6px;
+.pulse {
+  width: 7px; height: 7px;
   border-radius: 50%;
   background: var(--dim);
-}
-.status-dot.ready { background: var(--green); box-shadow: 0 0 8px var(--green); }
-.status-dot.running { background: var(--purple); box-shadow: 0 0 8px var(--purple); animation: pulse 1s infinite; }
-.status-dot.done { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
-.status-dot.error { background: var(--red); }
-
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-.badge {
-  font-size: 10px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: rgba(124,111,247,0.12);
-  color: var(--purple2);
-  border: 1px solid rgba(124,111,247,0.2);
-  font-family: var(--mono);
-  letter-spacing: 0.3px;
+  flex-shrink: 0;
 }
 
-/* MAIN LAYOUT */
-.app {
-  position: relative;
-  z-index: 1;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  grid-template-rows: auto;
-  gap: 16px;
-}
+.pulse.ready  { background: var(--green); box-shadow: 0 0 0 2px rgba(0,168,107,0.2); }
+.pulse.active { background: var(--accent2); box-shadow: 0 0 0 2px rgba(139,92,246,0.2); animation: throb 1s ease infinite; }
+.pulse.done   { background: var(--cyan); box-shadow: 0 0 0 2px rgba(0,198,198,0.2); }
+.pulse.error  { background: var(--red); }
 
-/* SEARCH AREA */
-.search-area {
-  grid-column: 1 / -1;
-}
+@keyframes throb { 0%,100%{transform:scale(1)} 50%{transform:scale(1.4)} }
 
-.search-container {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.search-label {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 1px;
+.ms-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  background: rgba(0,120,212,0.15);
+  border: 1px solid rgba(0,120,212,0.3);
+  border-radius: var(--r);
+  color: #5ba5e8;
   text-transform: uppercase;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
-.search-label::before {
-  content: '//';
-  color: var(--purple);
+/* ═══════════════════════════════════════════════════════
+   HERO BAND
+═══════════════════════════════════════════════════════ */
+.hero-band {
+  background: var(--ink2);
+  border-bottom: 1px solid var(--ink3);
+  padding: 28px 32px 24px;
+  position: relative;
+  overflow: hidden;
 }
 
-.search-row {
-  display: flex;
-  gap: 10px;
+/* Diagonal accent strip */
+.hero-band::after {
+  content: '';
+  position: absolute;
+  top: 0; right: -40px;
+  width: 200px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(91,0,255,0.08) 100%);
+  transform: skewX(-12deg);
+  pointer-events: none;
 }
 
-.search-input {
-  flex: 1;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 14px;
-  padding: 12px 16px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.search-input:focus { border-color: var(--purple); }
-.search-input::placeholder { color: var(--dim); }
-
-.run-btn {
-  padding: 12px 24px;
-  background: var(--purple);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-family: var(--display);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-}
-
-.run-btn:hover { background: var(--purple2); transform: translateY(-1px); }
-.run-btn:active { transform: scale(0.98); }
-.run-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-.examples {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
-
-.example-btn {
-  font-size: 11px;
-  padding: 5px 10px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--muted);
-  cursor: pointer;
-  font-family: var(--mono);
-  transition: all 0.15s;
-}
-
-.example-btn:hover {
-  border-color: var(--purple);
-  color: var(--purple2);
-  background: rgba(124,111,247,0.06);
-}
-
-/* AGENT PIPELINE */
-.pipeline-section {
-  grid-column: 1 / -1;
-}
-
-.section-header {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 1px;
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--accent2);
   text-transform: uppercase;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.section-header::before { content: '//'; color: var(--purple); }
-
-.pipeline {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+.hero-eyebrow::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--accent2);
 }
 
-.agent-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
+.hero-headline {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 46px);
+  letter-spacing: 2px;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.hero-sub {
+  font-size: 13px;
+  color: var(--dim);
+  max-width: 580px;
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SEARCH ZONE
+═══════════════════════════════════════════════════════ */
+.search-zone {
+  background: var(--ink2);
+  padding: 0 32px 24px;
+  border-bottom: 3px solid var(--accent);
+}
+
+.search-wrap {
+  display: flex;
+  gap: 0;
+  background: var(--ink3);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r2);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.search-wrap:focus-within {
+  box-shadow: 0 0 0 2px var(--accent), 0 8px 32px rgba(91,0,255,0.2);
+}
+
+.search-field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 16px 20px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--white);
+  outline: none;
+}
+
+.search-field::placeholder { color: rgba(155,152,184,0.5); }
+
+.search-divider {
+  width: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 10px 0;
+}
+
+.launch-btn {
+  padding: 14px 28px;
+  background: var(--accent);
+  border: none;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s;
 }
 
-.agent-card::before {
+.launch-btn::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--border2);
-  transition: all 0.3s;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.15s;
 }
 
-.agent-card.active {
-  border-color: rgba(124,111,247,0.3);
-  background: rgba(124,111,247,0.04);
-}
+.launch-btn:hover::after { background: rgba(255,255,255,0.08); }
+.launch-btn:active { transform: scale(0.98); }
+.launch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.agent-card.active::before {
-  background: linear-gradient(90deg, var(--purple), var(--cyan));
-  animation: slide 1.5s linear infinite;
-}
-
-@keyframes slide {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
-.agent-card.done {
-  border-color: rgba(82,232,154,0.2);
-  background: rgba(82,232,154,0.02);
-}
-
-.agent-card.done::before { background: var(--green); }
-.agent-card.retrying { border-color: rgba(245,184,65,0.3); }
-.agent-card.retrying::before { background: var(--amber); animation: slide 0.8s linear infinite; }
-
-.agent-num {
-  font-size: 10px;
-  color: var(--dim);
-  font-family: var(--mono);
-  margin-bottom: 8px;
-}
-
-.agent-name {
-  font-family: var(--display);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--muted);
-  margin-bottom: 4px;
-  transition: color 0.3s;
-}
-
-.agent-card.active .agent-name { color: var(--purple2); }
-.agent-card.done .agent-name { color: var(--green); }
-.agent-card.retrying .agent-name { color: var(--amber); }
-
-.agent-desc {
-  font-size: 11px;
-  color: var(--dim);
-  line-height: 1.5;
-}
-
-.agent-stat {
-  margin-top: 10px;
-  font-size: 11px;
-  color: var(--purple);
-  font-family: var(--mono);
-  min-height: 14px;
-}
-
-.agent-card.done .agent-stat { color: var(--green); }
-.agent-card.retrying .agent-stat { color: var(--amber); }
-
-/* MAIN CONTENT AREA */
-.main-content {
+.example-row {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* AGENT MESSAGE LOG */
-.log-panel {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.log-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
+  gap: 8px;
+  margin-top: 12px;
   align-items: center;
-  justify-content: space-between;
-  background: var(--bg3);
+  flex-wrap: wrap;
 }
 
-.log-title {
-  font-size: 11px;
-  color: var(--muted);
+.ex-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
   letter-spacing: 1px;
+  color: var(--dim);
   text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
-.log-title::before { content: '//'; color: var(--cyan); }
-
-.log-count {
-  font-size: 10px;
-  color: var(--dim);
-  font-family: var(--mono);
-}
-
-.log-body {
-  height: 280px;
-  overflow-y: auto;
-  padding: 12px;
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1.6;
-  scroll-behavior: smooth;
-}
-
-.log-body::-webkit-scrollbar { width: 4px; }
-.log-body::-webkit-scrollbar-track { background: transparent; }
-.log-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-.log-empty {
-  color: var(--dim);
-  text-align: center;
-  padding: 40px 0;
+.ex-chip {
   font-size: 11px;
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  color: var(--dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-body);
 }
 
-.log-entry {
-  display: flex;
-  gap: 10px;
-  padding: 4px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  animation: fadeIn 0.2s ease;
+.ex-chip:hover {
+  border-color: var(--accent2);
+  color: var(--accent2);
+  background: rgba(139,92,246,0.08);
 }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
-
-.log-time { color: var(--dim); min-width: 50px; flex-shrink: 0; }
-
-.log-from {
-  min-width: 72px;
-  flex-shrink: 0;
-  font-weight: 600;
-}
-
-.log-arrow { color: var(--dim); flex-shrink: 0; }
-
-.log-to {
-  min-width: 72px;
-  flex-shrink: 0;
-  font-weight: 600;
-}
-
-.log-msg { color: var(--text); flex: 1; }
-
-/* Agent colors */
-.from-planner, .to-planner { color: var(--purple2); }
-.from-retriever, .to-retriever { color: var(--cyan); }
-.from-validator, .to-validator { color: var(--amber); }
-.from-writer, .to-writer { color: var(--green); }
-.from-system, .to-system { color: var(--dim); }
-.from-web, .to-web { color: #94a3b8; }
-.from-output, .to-output { color: var(--green); }
-.from-facts, .to-facts { color: var(--amber); }
-
-.msg-confirmed { color: var(--green); }
-.msg-contradicted { color: var(--red); }
-.msg-uncertain { color: var(--amber); }
-.msg-retry { color: var(--amber); font-weight: 600; }
-.msg-success { color: var(--green); }
-.msg-parallel { color: var(--cyan); }
-
-/* REPORT AREA */
-.report-panel {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+/* ═══════════════════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════════════════ */
+.progress-rail {
+  height: 2px;
+  background: var(--line2);
   overflow: hidden;
   display: none;
 }
 
-.report-panel.visible { display: block; }
+.progress-rail.show { display: block; }
 
-.report-header {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg3);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.report-title-label {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.report-title-label::before { content: '//'; color: var(--green); }
-
-.export-btn {
-  font-size: 11px;
-  padding: 5px 12px;
-  background: rgba(82,232,154,0.1);
-  border: 1px solid rgba(82,232,154,0.2);
-  border-radius: 4px;
-  color: var(--green);
-  cursor: pointer;
-  font-family: var(--mono);
-  transition: all 0.15s;
-}
-
-.export-btn:hover { background: rgba(82,232,154,0.18); }
-
-.report-body { padding: 20px; }
-
-.report-name {
-  font-family: var(--display);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 12px;
-  line-height: 1.3;
-}
-
-.report-meta {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.meta-tag {
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 4px;
-  font-family: var(--mono);
-}
-
-.meta-high { background: rgba(82,232,154,0.1); color: var(--green); border: 1px solid rgba(82,232,154,0.2); }
-.meta-medium { background: rgba(245,184,65,0.1); color: var(--amber); border: 1px solid rgba(245,184,65,0.2); }
-.meta-low { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid rgba(255,107,107,0.2); }
-.meta-neutral { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
-
-.exec-summary {
-  background: var(--bg3);
-  border-left: 2px solid var(--purple);
-  padding: 12px 16px;
-  border-radius: 0 6px 6px 0;
-  font-size: 13px;
-  line-height: 1.75;
-  color: #b8b4cc;
-  margin-bottom: 20px;
-}
-
-.report-section { margin-bottom: 20px; }
-
-.section-name {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--purple2);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-
-.section-content {
-  font-size: 13px;
-  line-height: 1.8;
-  color: #9896aa;
-}
-
-/* RIGHT SIDEBAR */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* FACT VALIDATION PANEL */
-.facts-panel {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.panel-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg3);
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.panel-header::before { content: '//'; color: var(--amber); }
-
-.facts-body {
-  max-height: 320px;
-  overflow-y: auto;
-  padding: 10px;
-}
-
-.facts-body::-webkit-scrollbar { width: 3px; }
-.facts-body::-webkit-scrollbar-thumb { background: var(--border2); }
-
-.fact-item {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 10px 12px;
-  margin-bottom: 6px;
-  font-size: 11px;
-}
-
-.fact-verdict-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-
-.verdict-badge {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-family: var(--mono);
-}
-
-.verdict-confirmed { background: rgba(82,232,154,0.12); color: var(--green); }
-.verdict-uncertain { background: rgba(245,184,65,0.12); color: var(--amber); }
-.verdict-contradicted { background: rgba(255,107,107,0.12); color: var(--red); }
-
-.fact-confidence { font-size: 10px; color: var(--dim); }
-
-.fact-text {
-  color: #9896aa;
-  line-height: 1.4;
-  margin-bottom: 4px;
-}
-
-.fact-reason { color: var(--dim); font-size: 10px; }
-
-.conf-bar {
-  height: 2px;
-  background: var(--border);
-  border-radius: 1px;
-  margin-top: 6px;
-  overflow: hidden;
-}
-
-.conf-fill {
+.progress-train {
   height: 100%;
-  border-radius: 1px;
-  background: linear-gradient(90deg, var(--purple), var(--cyan));
-  transition: width 0.5s ease;
+  background: linear-gradient(90deg, var(--accent), var(--cyan), var(--accent));
+  background-size: 300%;
+  animation: train 1.5s linear infinite;
 }
 
-/* INSIGHTS PANEL */
-.insights-panel {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+@keyframes train { 0%{background-position:100%} 100%{background-position:-100%} }
+
+/* ═══════════════════════════════════════════════════════
+   MAIN CANVAS
+═══════════════════════════════════════════════════════ */
+.canvas {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 32px;
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PIPELINE STRIP
+═══════════════════════════════════════════════════════ */
+.pipeline-strip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
   overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
-.insights-panel .panel-header::before { content: '//'; color: var(--cyan); }
+.agent-block {
+  padding: 18px 20px 16px;
+  border-right: 1px solid var(--line);
+  position: relative;
+  transition: background 0.25s;
+}
 
-.insight-item {
-  display: flex;
-  gap: 10px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-  color: #9896aa;
+.agent-block:last-child { border-right: none; }
+
+/* Top accent line per agent */
+.agent-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--line);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.agent-block.active::before {
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(91,0,255,0.4);
+  animation: linebreath 1.2s ease infinite;
+}
+
+.agent-block.done::before { background: var(--green); }
+.agent-block.retry::before { background: var(--gold); animation: linebreath 0.7s ease infinite; }
+
+@keyframes linebreath { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+.agent-block.active { background: rgba(91,0,255,0.02); }
+.agent-block.done   { background: rgba(0,168,107,0.02); }
+.agent-block.retry  { background: rgba(240,165,0,0.02); }
+
+.ab-index {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.ab-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 5px;
+  transition: color 0.25s;
+}
+
+.agent-block.active .ab-name { color: var(--accent); }
+.agent-block.done   .ab-name { color: var(--green); }
+.agent-block.retry  .ab-name { color: var(--gold); }
+
+.ab-desc {
+  font-size: 11px;
+  color: var(--dim);
   line-height: 1.5;
 }
 
-.insight-item:last-child { border-bottom: none; }
-
-.insight-num {
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  background: rgba(124,111,247,0.15);
-  color: var(--purple2);
+.ab-stat {
+  margin-top: 8px;
+  font-family: var(--font-mono);
   font-size: 10px;
-  font-weight: 600;
+  color: var(--accent);
+  min-height: 13px;
+  letter-spacing: 0.3px;
+}
+
+.agent-block.done .ab-stat { color: var(--green); }
+.agent-block.retry .ab-stat { color: var(--gold); }
+
+/* Arrow connector */
+.agent-block:not(:last-child)::after {
+  content: '›';
+  position: absolute;
+  right: -9px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--dim);
+  font-size: 16px;
+  z-index: 2;
+  background: var(--white);
+  padding: 0 1px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   LEFT COLUMN
+═══════════════════════════════════════════════════════ */
+.left-col { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── PANEL base ── */
+.panel {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.panel-head {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--line2);
+  background: rgba(14,12,26,0.02);
+}
+
+.ph-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ph-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ph-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--dim);
+}
+
+/* ── RETRY ALERT ── */
+.retry-alert {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  background: rgba(240,165,0,0.07);
+  border: 1px solid rgba(240,165,0,0.25);
+  border-radius: var(--r2);
+  font-size: 12px;
+  color: #9a6800;
+  animation: fadeup 0.3s ease;
+}
+
+.retry-alert.show { display: flex; }
+
+@keyframes fadeup { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+
+.retry-icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(240,165,0,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* ── LOG PANEL ── */
+.log-body {
+  height: 270px;
+  overflow-y: auto;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+.log-body::-webkit-scrollbar { width: 3px; }
+.log-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+.log-idle {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  margin-top: 1px;
+  height: 100%;
+  gap: 8px;
+  color: var(--dim);
+  font-family: var(--font-body);
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.7;
 }
 
-/* CONFIDENCE METER */
-.confidence-panel {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px;
+.log-idle-icon {
+  font-size: 28px;
+  opacity: 0.4;
 }
 
-.conf-label {
-  font-size: 11px;
+.log-entry {
+  display: grid;
+  grid-template-columns: 52px 70px 14px 70px 1fr;
+  gap: 6px;
+  align-items: baseline;
+  padding: 3.5px 0;
+  border-bottom: 1px solid var(--line2);
+  animation: fadeup 0.15s ease;
+}
+
+.log-entry:last-child { border-bottom: none; }
+
+.le-time { color: var(--dim); font-size: 10px; }
+.le-from { font-size: 10px; font-weight: 500; letter-spacing: 0.5px; }
+.le-arr  { color: var(--dim); font-size: 10px; }
+.le-to   { font-size: 10px; font-weight: 500; letter-spacing: 0.5px; }
+.le-msg  { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* Agent colors */
+.ac-planner   { color: var(--accent); }
+.ac-retriever { color: var(--cyan); }
+.ac-validator { color: var(--gold); }
+.ac-writer    { color: var(--green); }
+.ac-system, .ac-web, .ac-output, .ac-facts, .ac-error { color: var(--dim); }
+
+/* Message types */
+.mt-success      { color: var(--green); font-weight: 500; }
+.mt-confirmed    { color: var(--green); }
+.mt-contradicted { color: var(--red); }
+.mt-uncertain    { color: var(--gold); }
+.mt-retry        { color: var(--gold); font-weight: 600; }
+.mt-parallel     { color: var(--cyan); }
+.mt-keyword      { color: var(--accent2); }
+
+/* ── REPORT PANEL ── */
+.report-panel { display: none; }
+.report-panel.show { display: block; }
+
+.report-body { padding: 22px; }
+
+.r-kicker {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 8px;
+}
+
+.r-title {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.5vw, 26px);
+  letter-spacing: 1px;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+
+.r-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+
+.r-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: var(--r);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chip-high   { background: rgba(0,168,107,0.1);  color: var(--green); border: 1px solid rgba(0,168,107,0.2); }
+.chip-medium { background: rgba(240,165,0,0.1);  color: var(--gold);  border: 1px solid rgba(240,165,0,0.2); }
+.chip-low    { background: rgba(224,48,48,0.1);  color: var(--red);   border: 1px solid rgba(224,48,48,0.2); }
+.chip-neutral{ background: var(--surface2); color: var(--muted); border: 1px solid var(--line); }
+
+.r-summary {
+  background: var(--surface2);
+  border-left: 3px solid var(--accent);
+  padding: 14px 18px;
+  border-radius: 0 var(--r2) var(--r2) 0;
+  font-size: 13px;
+  line-height: 1.8;
   color: var(--muted);
+  margin-bottom: 22px;
+}
+
+.r-section { margin-bottom: 20px; }
+
+.r-section-head {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.r-section-body {
+  font-size: 13px;
+  line-height: 1.85;
+  color: var(--muted);
+}
+
+.export-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(0,168,107,0.08);
+  border: 1px solid rgba(0,168,107,0.2);
+  border-radius: var(--r);
+  color: var(--green);
+  cursor: pointer;
+  transition: all 0.15s;
 }
 
-.conf-label::before { content: '//'; color: var(--purple); }
+.export-btn:hover { background: rgba(0,168,107,0.14); }
 
-.conf-score {
-  font-family: var(--display);
-  font-size: 48px;
-  font-weight: 800;
-  color: var(--purple2);
+/* ── TIMING BAR ── */
+.timing-bar {
+  display: none;
+  padding: 10px 18px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--dim);
+  border-top: 1px solid var(--line2);
+  background: rgba(14,12,26,0.02);
+}
+
+.timing-bar.show { display: block; }
+
+/* ═══════════════════════════════════════════════════════
+   RIGHT SIDEBAR
+═══════════════════════════════════════════════════════ */
+.sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── CONFIDENCE METER ── */
+.conf-meter {
+  background: var(--ink);
+  border-radius: var(--r2);
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background number watermark */
+.conf-meter::before {
+  content: attr(data-score);
+  position: absolute;
+  right: -10px; top: -10px;
+  font-family: var(--font-display);
+  font-size: 120px;
+  color: rgba(255,255,255,0.03);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  transition: content 0.3s;
+}
+
+.cm-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+
+.cm-score {
+  font-family: var(--font-display);
+  font-size: 64px;
+  letter-spacing: 2px;
+  color: var(--white);
   line-height: 1;
   margin-bottom: 4px;
   transition: all 0.5s;
 }
 
-.conf-score span { font-size: 20px; color: var(--dim); }
-
-.conf-sublabel { font-size: 11px; color: var(--dim); margin-bottom: 12px; }
-
-.conf-track {
-  height: 4px;
-  background: var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 10px;
+.cm-score em {
+  font-style: normal;
+  font-size: 24px;
+  color: var(--dim);
 }
 
-.conf-progress {
-  height: 100%;
-  background: linear-gradient(90deg, var(--purple), var(--cyan));
+.cm-reliability {
+  font-size: 11px;
+  color: var(--dim);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--font-mono);
+}
+
+.cm-track {
+  height: 4px;
+  background: var(--ink3);
   border-radius: 2px;
-  transition: width 0.8s ease;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.cm-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  border-radius: 2px;
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   width: 0%;
 }
 
-.conf-stats {
+.cm-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 
-.conf-stat {
+.cms {
   text-align: center;
-  background: var(--bg3);
-  border-radius: 6px;
-  padding: 8px;
+  background: var(--ink2);
+  border-radius: var(--r);
+  padding: 10px 6px;
 }
 
-.conf-stat-num {
-  font-family: var(--display);
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 2px;
+.cms-num {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+  transition: all 0.4s;
 }
 
-.conf-stat-label { font-size: 10px; color: var(--dim); }
-
-.stat-confirmed .conf-stat-num { color: var(--green); }
-.stat-uncertain .conf-stat-num { color: var(--amber); }
-.stat-contradicted .conf-stat-num { color: var(--red); }
-
-/* HISTORY */
-.history-panel {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.history-panel .panel-header::before { content: '//'; color: var(--muted); }
-
-.history-item {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 11px;
+.cms-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   color: var(--dim);
-  cursor: pointer;
-  transition: all 0.15s;
+}
+
+.cms-confirmed .cms-num { color: var(--green); }
+.cms-uncertain .cms-num { color: var(--gold); }
+.cms-contradicted .cms-num { color: var(--red); }
+
+/* ── FACTS PANEL ── */
+.facts-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 10px 12px;
+}
+
+.facts-scroll::-webkit-scrollbar { width: 3px; }
+.facts-scroll::-webkit-scrollbar-thumb { background: var(--line); }
+
+.fact-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 10px 12px;
+  margin-bottom: 7px;
+  font-size: 11.5px;
+  transition: border-color 0.2s;
+}
+
+.fact-card:hover { border-color: var(--line); }
+
+.fc-top {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 6px;
 }
 
-.history-item:last-child { border-bottom: none; }
-.history-item:hover { background: rgba(124,111,247,0.04); color: var(--text); }
-.history-item::before { content: '›'; color: var(--purple); }
-
-/* GAPS */
-.gaps-panel {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
+.fc-verdict {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--r);
 }
 
-.gaps-panel .panel-header::before { content: '//'; color: var(--red); }
+.fv-confirmed    { background: rgba(0,168,107,0.1);  color: var(--green); }
+.fv-uncertain    { background: rgba(240,165,0,0.1);  color: var(--gold); }
+.fv-contradicted { background: rgba(224,48,48,0.1);  color: var(--red); }
 
-.gap-item {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 11px;
-  color: #9896aa;
+.fc-pct {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.fc-text { color: var(--muted); line-height: 1.45; margin-bottom: 5px; }
+.fc-reason { font-size: 10px; color: var(--dim); }
+
+.fc-bar { height: 2px; background: var(--line); border-radius: 1px; margin-top: 7px; overflow: hidden; }
+.fc-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--cyan)); border-radius: 1px; }
+
+/* ── INSIGHTS / GAPS ── */
+.list-item {
   display: flex;
-  gap: 8px;
-  line-height: 1.5;
-}
-
-.gap-item:last-child { border-bottom: none; }
-.gap-icon { color: var(--amber); flex-shrink: 0; }
-
-/* RETRY BANNER */
-.retry-banner {
-  background: rgba(245,184,65,0.08);
-  border: 1px solid rgba(245,184,65,0.2);
-  border-radius: 8px;
-  padding: 10px 14px;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line2);
   font-size: 12px;
-  color: var(--amber);
-  display: none;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.list-item:last-child { border-bottom: none; }
+
+.li-num {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--surface2);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.li-warn { color: var(--gold); flex-shrink: 0; margin-top: 2px; font-size: 11px; }
+
+/* ── HISTORY ── */
+.hist-item {
+  display: flex;
   align-items: center;
   gap: 8px;
-  animation: fadeIn 0.3s ease;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--line2);
+  font-size: 11.5px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.12s;
 }
 
-.retry-banner.visible { display: flex; }
+.hist-item:last-child { border-bottom: none; }
 
-/* LOADING */
-.loading-bar {
-  height: 2px;
-  background: var(--border);
-  border-radius: 1px;
-  overflow: hidden;
-  margin-top: 10px;
-  display: none;
+.hist-item:hover {
+  background: var(--surface2);
+  color: var(--accent);
+  padding-left: 20px;
 }
 
-.loading-bar.visible { display: block; }
-
-.loading-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--purple), var(--cyan), var(--purple));
-  background-size: 200% 100%;
-  animation: loading 1.5s linear infinite;
+.hist-item::before {
+  content: '›';
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
 }
 
-@keyframes loading { 0%{background-position:100% 0} 100%{background-position:-100% 0} }
-
-/* TIMING */
-.timing-bar {
-  text-align: center;
-  font-size: 11px;
-  color: var(--dim);
-  padding: 8px;
-  display: none;
-}
-
-.timing-bar.visible { display: block; }
+/* ═══════════════════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════════════════ */
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">
-    <div class="logo-icon">⚡</div>
-    Swarm<span>IQ</span>
+<!-- ── MASTHEAD ───────────────────────────────────── -->
+<header class="masthead">
+  <div class="masthead-left">
+    <div class="wordmark">SWARM<em>IQ</em></div>
+    <div class="version-tag">v2.0</div>
   </div>
-  <div class="header-right">
-    <div class="status-indicator">
-      <div class="status-dot ready" id="statusDot"></div>
-      <span id="statusText">ready</span>
+  <div class="masthead-right">
+    <div class="system-status">
+      <div class="pulse ready" id="statusPulse"></div>
+      <span id="statusLabel">system ready</span>
     </div>
-    <div class="badge">THEME 05 · AGENT SWARMS</div>
+    <div class="ms-badge">Microsoft Build · Theme 05</div>
+  </div>
+</header>
+
+<!-- ── HERO ───────────────────────────────────────── -->
+<div class="hero-band">
+  <div class="hero-eyebrow">Multi-Agent Intelligence Platform</div>
+  <div class="hero-headline">Research that validates itself</div>
+  <div class="hero-sub">Four specialized AI agents — Planner, Retriever, Validator, Writer — collaborate in real time to deliver sourced, fact-checked research with confidence scoring.</div>
+</div>
+
+<!-- ── SEARCH ─────────────────────────────────────── -->
+<div class="search-zone">
+  <div class="search-wrap">
+    <input class="search-field" id="queryInput" type="text"
+      placeholder="What do you want to research? e.g. Impact of AI on manufacturing in India 2025"
+      onkeydown="if(event.key==='Enter') launch()"/>
+    <div class="search-divider"></div>
+    <button class="launch-btn" id="launchBtn" onclick="launch()">LAUNCH SWARM</button>
+  </div>
+  <div class="example-row">
+    <span class="ex-label">examples</span>
+    <button class="ex-chip" onclick="setQ('EV trends and market growth in India 2025')">EV trends India 2025</button>
+    <button class="ex-chip" onclick="setQ('Impact of generative AI on software engineering jobs globally')">AI impact on jobs</button>
+    <button class="ex-chip" onclick="setQ('India renewable energy solar wind targets and progress 2025')">India renewable energy</button>
+    <button class="ex-chip" onclick="setQ('Latest breakthroughs in quantum computing 2025')">Quantum computing 2025</button>
+    <button class="ex-chip" onclick="setQ('Global semiconductor chip shortage impact on technology industry')">Chip shortage impact</button>
   </div>
 </div>
 
-<div class="app">
+<div class="progress-rail" id="progressRail"><div class="progress-train"></div></div>
 
-  <!-- SEARCH -->
-  <div class="search-area">
-    <div class="search-container">
-      <div class="search-label">research query</div>
-      <div class="search-row">
-        <input
-          class="search-input"
-          id="queryInput"
-          type="text"
-          placeholder="What do you want to research? e.g. Impact of AI on jobs in India 2025"
-          onkeydown="if(event.key==='Enter') startResearch()"
-        />
-        <button class="run-btn" id="runBtn" onclick="startResearch()">▶ RUN SWARM</button>
-      </div>
-      <div class="examples">
-        <span style="font-size:11px;color:var(--dim);margin-right:2px">examples:</span>
-        <button class="example-btn" onclick="setQuery('What are EV trends in India 2025?')">EV trends India 2025</button>
-        <button class="example-btn" onclick="setQuery('Impact of generative AI on software jobs globally')">AI impact on jobs</button>
-        <button class="example-btn" onclick="setQuery('India renewable energy progress and targets 2025')">India renewable energy</button>
-        <button class="example-btn" onclick="setQuery('Latest developments in quantum computing 2025')">Quantum computing 2025</button>
-      </div>
-      <div class="loading-bar" id="loadingBar"><div class="loading-fill"></div></div>
+<!-- ── CANVAS ─────────────────────────────────────── -->
+<div class="canvas">
+
+  <!-- PIPELINE STRIP (full width) -->
+  <div class="pipeline-strip" style="grid-column:1/-1">
+    <div class="agent-block" id="block-planner">
+      <div class="ab-index">01 · planner</div>
+      <div class="ab-name">PLANNER</div>
+      <div class="ab-desc">Decomposes query into sub-tasks and search keywords</div>
+      <div class="ab-stat" id="stat-planner"></div>
+    </div>
+    <div class="agent-block" id="block-retriever">
+      <div class="ab-index">02 · retriever</div>
+      <div class="ab-name">RETRIEVER</div>
+      <div class="ab-desc">Parallel web search across multiple sources</div>
+      <div class="ab-stat" id="stat-retriever"></div>
+    </div>
+    <div class="agent-block" id="block-validator">
+      <div class="ab-index">03 · validator</div>
+      <div class="ab-name">VALIDATOR</div>
+      <div class="ab-desc">Cross-checks facts, scores confidence, triggers retries</div>
+      <div class="ab-stat" id="stat-validator"></div>
+    </div>
+    <div class="agent-block" id="block-writer">
+      <div class="ab-index">04 · writer</div>
+      <div class="ab-name">WRITER</div>
+      <div class="ab-desc">Synthesizes validated research into structured report</div>
+      <div class="ab-stat" id="stat-writer"></div>
     </div>
   </div>
 
-  <!-- PIPELINE -->
-  <div class="pipeline-section">
-    <div class="section-header">agent pipeline</div>
-    <div class="pipeline">
-      <div class="agent-card" id="card-planner">
-        <div class="agent-num">01 / planner</div>
-        <div class="agent-name">Planner</div>
-        <div class="agent-desc">Decomposes query into sub-tasks and search keywords</div>
-        <div class="agent-stat" id="stat-planner"></div>
-      </div>
-      <div class="agent-card" id="card-retriever">
-        <div class="agent-num">02 / retriever</div>
-        <div class="agent-name">Retriever</div>
-        <div class="agent-desc">Parallel web search — multiple sources simultaneously</div>
-        <div class="agent-stat" id="stat-retriever"></div>
-      </div>
-      <div class="agent-card" id="card-validator">
-        <div class="agent-num">03 / validator</div>
-        <div class="agent-name">Validator</div>
-        <div class="agent-desc">Cross-checks facts, scores confidence, triggers retries</div>
-        <div class="agent-stat" id="stat-validator"></div>
-      </div>
-      <div class="agent-card" id="card-writer">
-        <div class="agent-num">04 / writer</div>
-        <div class="agent-name">Writer</div>
-        <div class="agent-desc">Synthesizes validated research into structured report</div>
-        <div class="agent-stat" id="stat-writer"></div>
-      </div>
-    </div>
-  </div>
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
 
-  <!-- MAIN CONTENT -->
-  <div class="main-content">
-
-    <!-- RETRY BANNER -->
-    <div class="retry-banner" id="retryBanner">
-      ⟳ <span id="retryText">Validator triggered retry loop — requesting additional research...</span>
+    <!-- Retry alert -->
+    <div class="retry-alert" id="retryAlert">
+      <div class="retry-icon">⟳</div>
+      <span id="retryMsg">Validator triggered retry — confidence below threshold. Requesting additional research...</span>
     </div>
 
-    <!-- AGENT MESSAGE LOG -->
-    <div class="log-panel">
-      <div class="log-header">
-        <div class="log-title">agent communication log</div>
-        <div class="log-count" id="logCount">0 messages</div>
+    <!-- Agent communication log -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ph-label">
+          <div class="ph-dot" style="background:var(--cyan)"></div>
+          Agent Communication Log
+        </div>
+        <div class="ph-count" id="logCount">0 messages</div>
       </div>
       <div class="log-body" id="logBody">
-        <div class="log-empty">Waiting for swarm to initialize...<br><br>Agent messages will appear here in real time.</div>
+        <div class="log-idle">
+          <div class="log-idle-icon">⬡</div>
+          <div>Swarm is idle.<br>Enter a query above and click <strong>Launch Swarm</strong>.<br>Agent messages appear here in real time.</div>
+        </div>
       </div>
     </div>
 
-    <!-- REPORT -->
-    <div class="report-panel" id="reportPanel">
-      <div class="report-header">
-        <div class="report-title-label">research report</div>
-        <button class="export-btn" onclick="exportReport()">↓ export .txt</button>
+    <!-- Report -->
+    <div class="panel report-panel" id="reportPanel">
+      <div class="panel-head">
+        <div class="ph-label">
+          <div class="ph-dot" style="background:var(--green)"></div>
+          Research Report
+        </div>
+        <button class="export-btn" onclick="exportReport()">↓ Export</button>
       </div>
       <div class="report-body" id="reportBody"></div>
+      <div class="timing-bar" id="timingBar"></div>
     </div>
 
-    <div class="timing-bar" id="timingBar"></div>
   </div>
 
-  <!-- SIDEBAR -->
+  <!-- RIGHT SIDEBAR -->
   <div class="sidebar">
 
-    <!-- CONFIDENCE METER -->
-    <div class="confidence-panel">
-      <div class="conf-label">confidence score</div>
-      <div class="conf-score" id="confScore">—<span>/100</span></div>
-      <div class="conf-sublabel" id="confReliability">awaiting validation</div>
-      <div class="conf-track"><div class="conf-progress" id="confProgress"></div></div>
-      <div class="conf-stats">
-        <div class="conf-stat stat-confirmed">
-          <div class="conf-stat-num" id="statConfirmed">—</div>
-          <div class="conf-stat-label">confirmed</div>
+    <!-- Confidence meter -->
+    <div class="conf-meter" id="confMeter" data-score="—">
+      <div class="cm-label">Confidence Score</div>
+      <div class="cm-score" id="cmScore">—<em>/100</em></div>
+      <div class="cm-reliability" id="cmReliability">awaiting validation</div>
+      <div class="cm-track"><div class="cm-fill" id="cmFill"></div></div>
+      <div class="cm-stats">
+        <div class="cms cms-confirmed">
+          <div class="cms-num" id="sConf">—</div>
+          <div class="cms-label">confirmed</div>
         </div>
-        <div class="conf-stat stat-uncertain">
-          <div class="conf-stat-num" id="statUncertain">—</div>
-          <div class="conf-stat-label">uncertain</div>
+        <div class="cms cms-uncertain">
+          <div class="cms-num" id="sUnc">—</div>
+          <div class="cms-label">uncertain</div>
         </div>
-        <div class="conf-stat stat-contradicted">
-          <div class="conf-stat-num" id="statContradicted">—</div>
-          <div class="conf-stat-label">contradicted</div>
+        <div class="cms cms-contradicted">
+          <div class="cms-num" id="sCont">—</div>
+          <div class="cms-label">contradicted</div>
         </div>
       </div>
     </div>
 
-    <!-- FACT VALIDATION -->
-    <div class="facts-panel">
-      <div class="panel-header">fact validation</div>
-      <div class="facts-body" id="factsBody">
-        <div style="padding:20px;text-align:center;font-size:11px;color:var(--dim)">Facts appear after validation</div>
+    <!-- Fact validation -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ph-label">
+          <div class="ph-dot" style="background:var(--gold)"></div>
+          Fact Validation
+        </div>
+      </div>
+      <div class="facts-scroll" id="factsBody">
+        <div style="padding:32px 16px;text-align:center;font-size:12px;color:var(--dim);font-family:var(--font-body)">
+          Facts appear here after validation
+        </div>
       </div>
     </div>
 
-    <!-- KEY INSIGHTS -->
-    <div class="insights-panel" id="insightsPanel" style="display:none">
-      <div class="panel-header">key insights</div>
+    <!-- Key insights (shown after research) -->
+    <div class="panel" id="insightsPanel" style="display:none">
+      <div class="panel-head">
+        <div class="ph-label">
+          <div class="ph-dot" style="background:var(--accent2)"></div>
+          Key Insights
+        </div>
+      </div>
       <div id="insightsList"></div>
     </div>
 
-    <!-- RESEARCH GAPS -->
-    <div class="gaps-panel" id="gapsPanel" style="display:none">
-      <div class="panel-header">research gaps</div>
+    <!-- Research gaps (shown after research) -->
+    <div class="panel" id="gapsPanel" style="display:none">
+      <div class="panel-head">
+        <div class="ph-label">
+          <div class="ph-dot" style="background:var(--gold)"></div>
+          Research Gaps
+        </div>
+      </div>
       <div id="gapsList"></div>
     </div>
 
-    <!-- HISTORY -->
-    <div class="history-panel" id="historyPanel" style="display:none">
-      <div class="panel-header">query history</div>
+    <!-- Query history -->
+    <div class="panel" id="historyPanel" style="display:none">
+      <div class="panel-head">
+        <div class="ph-label">
+          <div class="ph-dot" style="background:var(--dim)"></div>
+          Query History
+        </div>
+      </div>
       <div id="historyList"></div>
     </div>
 
   </div>
-
 </div>
 
+<!-- ═══════════════════════════════════════════════════
+   JAVASCRIPT
+═══════════════════════════════════════════════════ -->
 <script>
 const API = 'https://swarmiq-e4zw.onrender.com';
 let logCount = 0;
 let currentReport = null;
-let queryHistory = [];
+let history = [];
 
-function setQuery(q) {
+/* ── helpers ── */
+function setQ(q) {
   document.getElementById('queryInput').value = q;
   document.getElementById('queryInput').focus();
 }
 
-function setAgent(name, state, stat = '') {
-  const card = document.getElementById('card-' + name);
-  const statEl = document.getElementById('stat-' + name);
-  card.className = 'agent-card ' + state;
-  if (stat) statEl.textContent = stat;
+function setAgent(name, state, stat) {
+  const el = document.getElementById('block-' + name);
+  el.className = 'agent-block' + (state ? ' ' + state : '');
+  if (stat !== undefined) document.getElementById('stat-' + name).textContent = stat;
 }
 
 function setStatus(state, text) {
-  document.getElementById('statusDot').className = 'status-dot ' + state;
-  document.getElementById('statusText').textContent = text;
+  document.getElementById('statusPulse').className = 'pulse ' + state;
+  document.getElementById('statusLabel').textContent = text;
 }
 
-function addLog(time, from, to, message, msgType = '') {
+function addLog(time, from, to, msg, type) {
   const body = document.getElementById('logBody');
-  const empty = body.querySelector('.log-empty');
-  if (empty) empty.remove();
+  const idle = body.querySelector('.log-idle');
+  if (idle) idle.remove();
 
   logCount++;
   document.getElementById('logCount').textContent = logCount + ' messages';
 
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
-
-  const msgClass = msgType ? 'msg-' + msgType : '';
-
-  entry.innerHTML = `
-    <span class="log-time">${time}</span>
-    <span class="log-from from-${from}">${from.toUpperCase()}</span>
-    <span class="log-arrow">→</span>
-    <span class="log-to to-${to}">${to.toUpperCase()}</span>
-    <span class="log-msg ${msgClass}">${message}</span>
+  const row = document.createElement('div');
+  row.className = 'log-entry';
+  const msgClass = type ? 'mt-' + type : '';
+  row.innerHTML = `
+    <span class="le-time">${time}</span>
+    <span class="le-from ac-${from}">${from.toUpperCase()}</span>
+    <span class="le-arr">›</span>
+    <span class="le-to ac-${to}">${to.toUpperCase()}</span>
+    <span class="le-msg ${msgClass}">${msg}</span>
   `;
-
-  body.appendChild(entry);
+  body.appendChild(row);
   body.scrollTop = body.scrollHeight;
 }
 
-function startResearch() {
+/* ── reset UI ── */
+function resetUI() {
+  logCount = 0;
+  document.getElementById('logBody').innerHTML = `
+    <div class="log-idle">
+      <div class="log-idle-icon">⬡</div>
+      <div>Connecting to swarm...</div>
+    </div>`;
+  document.getElementById('logCount').textContent = '0 messages';
+  document.getElementById('reportPanel').classList.remove('show');
+  document.getElementById('retryAlert').classList.remove('show');
+  document.getElementById('progressRail').classList.add('show');
+  document.getElementById('timingBar').classList.remove('show');
+  document.getElementById('insightsPanel').style.display = 'none';
+  document.getElementById('gapsPanel').style.display = 'none';
+  document.getElementById('cmScore').innerHTML = '—<em>/100</em>';
+  document.getElementById('cmFill').style.width = '0%';
+  document.getElementById('cmReliability').textContent = 'running validation...';
+  document.getElementById('sConf').textContent = '—';
+  document.getElementById('sUnc').textContent = '—';
+  document.getElementById('sCont').textContent = '—';
+  document.getElementById('confMeter').dataset.score = '—';
+  document.getElementById('factsBody').innerHTML = '<div style="padding:32px 16px;text-align:center;font-size:12px;color:var(--dim);font-family:var(--font-body)">Validating facts...</div>';
+  ['planner','retriever','validator','writer'].forEach(a => setAgent(a, '', ''));
+}
+
+/* ── main launch ── */
+function launch() {
   const query = document.getElementById('queryInput').value.trim();
   if (!query) return;
 
-  const btn = document.getElementById('runBtn');
+  const btn = document.getElementById('launchBtn');
   btn.disabled = true;
-  btn.textContent = '⟳ RUNNING...';
+  btn.textContent = '⟳ RUNNING';
 
-  logCount = 0;
-  document.getElementById('logBody').innerHTML = '<div class="log-empty">Connecting to swarm...</div>';
-  document.getElementById('logCount').textContent = '0 messages';
-  document.getElementById('reportPanel').classList.remove('visible');
-  document.getElementById('retryBanner').classList.remove('visible');
-  document.getElementById('loadingBar').classList.add('visible');
-  document.getElementById('timingBar').classList.remove('visible');
-  document.getElementById('insightsPanel').style.display = 'none';
-  document.getElementById('gapsPanel').style.display = 'none';
-  document.getElementById('confScore').textContent = '—';
-  document.getElementById('confScore').innerHTML = '—<span>/100</span>';
-  document.getElementById('confProgress').style.width = '0%';
-  document.getElementById('confReliability').textContent = 'running validation...';
-  document.getElementById('statConfirmed').textContent = '—';
-  document.getElementById('statUncertain').textContent = '—';
-  document.getElementById('statContradicted').textContent = '—';
-  document.getElementById('factsBody').innerHTML = '<div style="padding:20px;text-align:center;font-size:11px;color:var(--dim)">Validating facts...</div>';
+  resetUI();
+  setStatus('active', 'swarm active');
 
-  ['planner','retriever','validator','writer'].forEach(a => setAgent(a, '', ''));
-  setStatus('running', 'swarm active');
+  const t0 = Date.now();
+  const src = new EventSource(`${API}/research/stream?query=${encodeURIComponent(query)}`);
 
-  const startTime = Date.now();
-  const url = `${API}/research/stream?query=${encodeURIComponent(query)}`;
-  const evtSource = new EventSource(url);
-
-  evtSource.onmessage = (e) => {
+  src.onmessage = e => {
     const { type, data, ts } = JSON.parse(e.data);
 
     switch(type) {
-
       case 'session_start':
-        addLog(ts, 'system', 'swarm', data.message, 'info');
+        addLog(ts, 'system', 'swarm', data.message);
         break;
 
       case 'agent_start':
@@ -1111,26 +1214,26 @@ function startResearch() {
         break;
 
       case 'retry_triggered':
-        document.getElementById('retryBanner').classList.add('visible');
-        document.getElementById('retryText').textContent = data.reason + ' — ' + data.action;
-        setAgent('validator', 'retrying', '⟳ retrying...');
+        document.getElementById('retryAlert').classList.add('show');
+        document.getElementById('retryMsg').textContent = data.reason + ' — ' + data.action;
+        setAgent('validator', 'retry', '⟳ retrying...');
         setAgent('retriever', 'active', 'supplementary search...');
         break;
 
       case 'agent_done':
         if (data.agent === 'planner') {
-          setAgent('planner', 'done', `${data.keywords?.length} keywords · ${data.complexity}`);
+          setAgent('planner', 'done', `${data.keywords?.length || 0} keywords · ${data.complexity}`);
         } else if (data.agent === 'retriever') {
           setAgent('retriever', 'done', `${data.keywords_searched} searches · ${data.total_facts} facts`);
         } else if (data.agent === 'validator') {
-          setAgent('validator', 'done', `${data.confirmed}/${data.fact_checks?.length} confirmed · ${data.confidence_score}%`);
-          // Update confidence meter
-          document.getElementById('confScore').innerHTML = `${data.confidence_score}<span>/100</span>`;
-          document.getElementById('confProgress').style.width = data.confidence_score + '%';
-          document.getElementById('confReliability').textContent = data.reliability + ' reliability';
-          document.getElementById('statConfirmed').textContent = data.confirmed;
-          document.getElementById('statUncertain').textContent = data.uncertain;
-          document.getElementById('statContradicted').textContent = data.contradicted;
+          setAgent('validator', 'done', `${data.confirmed}/${data.fact_checks?.length || 0} confirmed · ${data.confidence_score}%`);
+          document.getElementById('cmScore').innerHTML = `${data.confidence_score}<em>/100</em>`;
+          document.getElementById('cmFill').style.width = data.confidence_score + '%';
+          document.getElementById('cmReliability').textContent = (data.reliability || 'medium') + ' reliability';
+          document.getElementById('sConf').textContent = data.confirmed;
+          document.getElementById('sUnc').textContent = data.uncertain;
+          document.getElementById('sCont').textContent = data.contradicted;
+          document.getElementById('confMeter').dataset.score = data.confidence_score;
           renderFacts(data.fact_checks || []);
         } else if (data.agent === 'writer') {
           setAgent('writer', 'done', `${data.sections} sections`);
@@ -1138,142 +1241,139 @@ function startResearch() {
         break;
 
       case 'pipeline_complete':
-        evtSource.close();
-        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        setStatus('done', `complete in ${elapsed}s`);
-        document.getElementById('loadingBar').classList.remove('visible');
-        document.getElementById('timingBar').classList.add('visible');
-        document.getElementById('timingBar').textContent =
-          `⚡ swarm completed in ${elapsed}s · ${data.plan?.search_keywords?.length || 0} searches · ${data.validation?.fact_checks?.length || 0} facts validated`;
-
+        src.close();
+        const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+        setStatus('done', `complete · ${elapsed}s`);
+        document.getElementById('progressRail').classList.remove('show');
         currentReport = data;
         renderReport(data);
         renderInsights(data.validation?.key_insights || []);
         renderGaps(data.report?.gaps || []);
-        addToHistory(query);
-
+        addHistory(query);
+        const tb = document.getElementById('timingBar');
+        tb.textContent = `⚡ Swarm completed in ${elapsed}s · ${data.plan?.search_keywords?.length || 0} keyword searches · ${data.validation?.fact_checks?.length || 0} facts validated`;
+        tb.classList.add('show');
         btn.disabled = false;
-        btn.textContent = '▶ RUN SWARM';
+        btn.textContent = 'LAUNCH SWARM';
         break;
 
       case 'error':
-        evtSource.close();
+        src.close();
         setStatus('error', 'error');
         addLog(ts, 'system', 'error', data.message, 'contradicted');
-        document.getElementById('loadingBar').classList.remove('visible');
+        document.getElementById('progressRail').classList.remove('show');
         btn.disabled = false;
-        btn.textContent = '▶ RUN SWARM';
+        btn.textContent = 'LAUNCH SWARM';
         break;
     }
   };
 
-  evtSource.onerror = () => {
-    evtSource.close();
+  src.onerror = () => {
+    src.close();
     setStatus('error', 'connection error');
-    document.getElementById('loadingBar').classList.remove('visible');
+    document.getElementById('progressRail').classList.remove('show');
+    const ts = new Date().toLocaleTimeString('en',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    addLog(ts, 'system', 'error', 'Connection failed. Free tier may be waking up (50s delay). Please try again in 30 seconds.', 'contradicted');
     btn.disabled = false;
-    btn.textContent = '▶ RUN SWARM';
-    addLog(new Date().toLocaleTimeString('en',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'}),
-      'system', 'error', 'Connection failed. Server may be waking up — try again in 30s.', 'contradicted');
+    btn.textContent = 'LAUNCH SWARM';
   };
 }
 
+/* ── render helpers ── */
 function renderFacts(facts) {
   if (!facts.length) return;
-  const verdictClass = { confirmed: 'verdict-confirmed', uncertain: 'verdict-uncertain', contradicted: 'verdict-contradicted' };
-  const msgClass = { confirmed: 'msg-confirmed', uncertain: 'msg-uncertain', contradicted: 'msg-contradicted' };
-  document.getElementById('factsBody').innerHTML = facts.map(fc => `
-    <div class="fact-item">
-      <div class="fact-verdict-row">
-        <span class="verdict-badge ${verdictClass[fc.verdict]}">${fc.verdict.toUpperCase()}</span>
-        <span class="fact-confidence">${fc.confidence}%</span>
+  const vc = { confirmed:'fv-confirmed', uncertain:'fv-uncertain', contradicted:'fv-contradicted' };
+  document.getElementById('factsBody').innerHTML = facts.map(f => `
+    <div class="fact-card">
+      <div class="fc-top">
+        <span class="fc-verdict ${vc[f.verdict]}">${f.verdict}</span>
+        <span class="fc-pct">${f.confidence}%</span>
       </div>
-      <div class="fact-text">${fc.fact}</div>
-      <div class="fact-reason">${fc.reason}</div>
-      <div class="conf-bar"><div class="conf-fill" style="width:${fc.confidence}%"></div></div>
+      <div class="fc-text">${f.fact}</div>
+      <div class="fc-reason">${f.reason}</div>
+      <div class="fc-bar"><div class="fc-bar-fill" style="width:${f.confidence}%"></div></div>
     </div>
   `).join('');
 }
 
 function renderReport(data) {
-  const report = data.report;
-  const relClass = { high: 'meta-high', medium: 'meta-medium', low: 'meta-low' }[report.reliability] || 'meta-neutral';
+  const r = data.report;
+  const rc = { high:'chip-high', medium:'chip-medium', low:'chip-low' };
   document.getElementById('reportBody').innerHTML = `
-    <div class="report-name">${report.title}</div>
-    <div class="report-meta">
-      <span class="meta-tag ${relClass}">${report.reliability.toUpperCase()} RELIABILITY</span>
-      <span class="meta-tag meta-neutral">confidence: ${report.confidence_score}/100</span>
-      <span class="meta-tag meta-neutral">${report.generated_at}</span>
+    <div class="r-kicker">Research Report · ${r.generated_at}</div>
+    <div class="r-title">${r.title}</div>
+    <div class="r-meta">
+      <span class="r-chip ${rc[r.reliability] || 'chip-neutral'}">${r.reliability} reliability</span>
+      <span class="r-chip chip-neutral">confidence ${r.confidence_score}/100</span>
+      <span class="r-chip chip-neutral">${r.sections?.length || 0} sections</span>
     </div>
-    <div class="exec-summary">${report.executive_summary}</div>
-    ${report.sections.map(s => `
-      <div class="report-section">
-        <div class="section-name">${s.heading}</div>
-        <div class="section-content">${s.content.replace(/\n/g, '<br><br>')}</div>
+    <div class="r-summary">${r.executive_summary}</div>
+    ${(r.sections || []).map(s => `
+      <div class="r-section">
+        <div class="r-section-head">${s.heading}</div>
+        <div class="r-section-body">${s.content.replace(/\n/g,'<br><br>')}</div>
       </div>
     `).join('')}
   `;
-  document.getElementById('reportPanel').classList.add('visible');
+  document.getElementById('reportPanel').classList.add('show');
+  setTimeout(() => {
+    document.getElementById('reportPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
 }
 
-function renderInsights(insights) {
-  if (!insights.length) return;
-  document.getElementById('insightsList').innerHTML = insights.map((ins, i) => `
-    <div class="insight-item">
-      <div class="insight-num">${i+1}</div>
+function renderInsights(items) {
+  if (!items.length) return;
+  document.getElementById('insightsList').innerHTML = items.map((ins, i) => `
+    <div class="list-item">
+      <div class="li-num">${i+1}</div>
       <div>${ins}</div>
     </div>
   `).join('');
   document.getElementById('insightsPanel').style.display = 'block';
 }
 
-function renderGaps(gaps) {
-  if (!gaps.length) return;
-  document.getElementById('gapsList').innerHTML = gaps.map(g => `
-    <div class="gap-item"><span class="gap-icon">!</span><span>${g}</span></div>
+function renderGaps(items) {
+  if (!items.length) return;
+  document.getElementById('gapsList').innerHTML = items.map(g => `
+    <div class="list-item">
+      <div class="li-warn">!</div>
+      <div>${g}</div>
+    </div>
   `).join('');
   document.getElementById('gapsPanel').style.display = 'block';
 }
 
-function addToHistory(query) {
-  queryHistory.unshift(query);
-  if (queryHistory.length > 5) queryHistory = queryHistory.slice(0, 5);
-  const panel = document.getElementById('historyPanel');
-  const list = document.getElementById('historyList');
-  list.innerHTML = queryHistory.map(q => `
-    <div class="history-item" onclick="setQuery('${q.replace(/'/g,"\\'")}')">
-      ${q.length > 45 ? q.slice(0,45) + '...' : q}
+function addHistory(q) {
+  history.unshift(q);
+  history = history.slice(0, 5);
+  document.getElementById('historyList').innerHTML = history.map(h => `
+    <div class="hist-item" onclick="setQ('${h.replace(/'/g, "\\'")}')">
+      ${h.length > 52 ? h.slice(0, 52) + '…' : h}
     </div>
   `).join('');
-  panel.style.display = 'block';
+  document.getElementById('historyPanel').style.display = 'block';
 }
 
 function exportReport() {
   if (!currentReport) return;
   const r = currentReport.report;
   const v = currentReport.validation;
-  let txt = `SWARMIQ RESEARCH REPORT\n${'='.repeat(60)}\n\n`;
-  txt += `Title: ${r.title}\n`;
-  txt += `Reliability: ${r.reliability.toUpperCase()} | Confidence: ${r.confidence_score}/100\n`;
+  let txt = `SWARMIQ RESEARCH REPORT\n${'═'.repeat(60)}\n\n`;
+  txt += `${r.title}\n`;
+  txt += `Reliability: ${r.reliability?.toUpperCase()} · Confidence: ${r.confidence_score}/100\n`;
   txt += `Generated: ${r.generated_at}\n\n`;
-  txt += `EXECUTIVE SUMMARY\n${'-'.repeat(40)}\n${r.executive_summary}\n\n`;
-  r.sections.forEach(s => {
-    txt += `${s.heading.toUpperCase()}\n${'-'.repeat(40)}\n${s.content}\n\n`;
-  });
-  txt += `FACT VALIDATION\n${'-'.repeat(40)}\n`;
-  v.fact_checks.forEach(fc => {
-    txt += `[${fc.verdict.toUpperCase()}] ${fc.fact} (${fc.confidence}%)\n`;
-  });
-  txt += `\nKEY INSIGHTS\n${'-'.repeat(40)}\n`;
-  v.key_insights.forEach((i, n) => { txt += `${n+1}. ${i}\n`; });
-  txt += `\nRESEARCH GAPS\n${'-'.repeat(40)}\n`;
-  (r.gaps || []).forEach(g => { txt += `• ${g}\n`; });
-  txt += `\n${'='.repeat(60)}\nGenerated by SwarmIQ — swarmiq-e4zw.onrender.com\n`;
-
-  const blob = new Blob([txt], { type: 'text/plain' });
+  txt += `EXECUTIVE SUMMARY\n${'─'.repeat(40)}\n${r.executive_summary}\n\n`;
+  (r.sections||[]).forEach(s => { txt += `${s.heading.toUpperCase()}\n${'─'.repeat(40)}\n${s.content}\n\n`; });
+  txt += `FACT VALIDATION\n${'─'.repeat(40)}\n`;
+  (v.fact_checks||[]).forEach(f => { txt += `[${f.verdict.toUpperCase()}] ${f.fact} (${f.confidence}%)\n  → ${f.reason}\n`; });
+  txt += `\nKEY INSIGHTS\n${'─'.repeat(40)}\n`;
+  (v.key_insights||[]).forEach((ins,i) => { txt += `${i+1}. ${ins}\n`; });
+  txt += `\nRESEARCH GAPS\n${'─'.repeat(40)}\n`;
+  (r.gaps||[]).forEach(g => { txt += `• ${g}\n`; });
+  txt += `\n${'═'.repeat(60)}\nGenerated by SwarmIQ · https://swarmiq-e4zw.onrender.com/dashboard\nMicrosoft Build Hackathon 2026 · Theme 05: Agent Swarms\n`;
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'swarmiq-report.txt';
+  a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+  a.download = `swarmiq-${Date.now()}.txt`;
   a.click();
 }
 </script>

@@ -63,7 +63,8 @@ Rules:
         if raw_json.startswith("json"):
             raw_json = raw_json[4:]
     raw_json = raw_json.strip()
-
+    import re
+    raw_json = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', raw_json)
     data = json.loads(raw_json)
     return PlannerOutput(**data)
 
